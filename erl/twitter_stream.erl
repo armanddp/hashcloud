@@ -37,7 +37,7 @@
 
 % single arg version expects url of the form http://user:password@stream.twitter.com/1/statuses/sample.json
 % this will spawn the 3 arg version so the shell is free
-% http://user:pwd@stream.twitter.com/1/statuses/filter.json
+% http://u@stream.twitter.com/1/statuses/filter.json
 fetch(URL) ->
   spawn(twitter_stream, fetch, [URL, 5, 30, []]).
 
@@ -93,7 +93,7 @@ fetch(_, Retry, _, _) when Retry =< 0 ->
 % this is the tweet handler persumably you could do something useful here
 %
 process_data(Data) ->
-  error_logger:info_msg("Received tweet ~p ~n", [Data]),
+%%  error_logger:info_msg("Received tweet ~p ~n", [Data]),
   Tweet = ?json_to_record(tweet, Data),
 %%  error_logger:info_msg("Converted tweet ~p ~n", [Tweet]),
   process_tweet(Tweet).
@@ -133,5 +133,6 @@ receive_chunk(RequestId) ->
   end.
 
 process_tweet(Tweet) ->
-	error_logger:info_msg("Received Text ~p ~n", [Tweet#tweet.text]),
+	error_logger:info_msg("Received Tweet ~p ~n", [Tweet#tweet.text]),
+	mnesia:write(Tweet),
 	ok.
